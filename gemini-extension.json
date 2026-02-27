@@ -1,0 +1,12 @@
+{
+  "name": "reqall",
+  "description": "Persistent semantic knowledgebase for AI agents",
+  "mcpServers": {
+    "reqall": {
+      "url": "${REQALL_URL:-https://reqall.net}/mcp",
+      "headers": {
+        "Authorization": "Bearer ${REQALL_API_KEY}"
+      }
+    }
+  }
+}
