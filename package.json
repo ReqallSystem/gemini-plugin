@@ -1,6 +1,6 @@
 {
   "name": "@reqall/gemini-plugin",
-  "version": "0.0.3",
+  "version": "2026.2.1",
   "description": "Reqall plugin for Google Gemini — persistent semantic memory for AI agents",
   "type": "module",
   "files": [
