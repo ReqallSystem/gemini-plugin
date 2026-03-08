@@ -23,6 +23,9 @@ If the project does not exist in Reqall, call `reqall:upsert_project` before sta
 
 ## Conventions
 
+- **Automatic Context**: BEFORE starting work on a new user request, you must automatically use `reqall:search` to load relevant past context, issues, and specs. Do NOT wait for the user to ask you to do this.
 - Issues: prefix titles with `BUG:`, `TASK:`, `BLOCKER:`, or `QUESTION:`
 - Specs: prefix titles with `ARCH:`, `API:`, `AUTH:`, `DATA:`, or `UI:`
-- After completing work, save a record of what was done
+- **Automatic Persistence**: When an `implementation_plan.md` artifact is approved by the user, explicitly push it to Reqall as a `spec` or `arch` record using the `reqall:upsert_record` tool. Do NOT wait for the user to ask you to do this.
+- **Automatic Persistence**: Treat `task.md` as your source of truth for execution. As you complete items in `task.md` or finish a coding session, automatically persist them as `issue` or `todo` records linked to the active project. Do NOT wait for the user to ask you to do this.
+- You can manually synchronize context and plans via slash commands (e.g., `/reqall-sync`), but you should strive to do this automatically during your workflow.
