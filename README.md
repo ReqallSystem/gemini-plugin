@@ -26,12 +26,13 @@ The Gemini plugin relies on Gemini's continuous generation of artifacts (`task.m
 - `/reqall-context` - Run before starting a complex task. Hydrates the agent's context window with relevant architecture, issues, and specifications from Reqall.
 - `/reqall-sync` - Explicitly pushes your current local `task.md` and `implementation_plan.md` outputs up to Reqall as linked semantic records.
 
-### Automatic Behaviors
-
-Instead of a terminal "Stop" hook, Gemini is instructed via its `GEMINI.md` system memory to act proactively:
-1. **Automatic Context Retrieval**: BEFORE starting any work on a new prompt, Gemini will automatically query Reqall to load relevant past context, specs, and open issues.
-2. **Automatic Project Persistence**: Upon user approval of an `implementation_plan.md`, Gemini will explicitly push it to Reqall as a `SPEC` or `ARCH` record.
-3. **Continuous Execution Saving**: As Gemini works through items in `task.md` or finishes a coding session, it will automatically persist them as `TODO` or `TASK` issues under the project, saving the user from having to manually request syncing.
+### Hooks
+ 
+The plugin utilizes native `gemini-cli` agent hooks via the `_agents/hooks/` directory to act proactively:
+1. **`before_request` (Context)**: BEFORE starting any work on a new prompt, Gemini will automatically query Reqall to load relevant past context, specs, and open issues.
+2. **`before_tool_use` (Guardrails)**: Before executing file modifications, Gemini refers to project constraints and architectural specifications.
+3. **`after_plan` (Specification)**: Upon user approval of an `implementation_plan.md`, Gemini will explicitly push it to Reqall as a `spec` or `arch` record.
+4. **`after_task` (Persistence)**: As Gemini works through items in `task.md` or finishes a coding session, it will automatically persist them as `todo` or `issue` records under the project, saving the user from having to manually request syncing.
 
 ## Future Roadmap / Planned Capabilities
 
