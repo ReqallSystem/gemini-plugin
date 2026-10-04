@@ -1,38 +1,45 @@
 # Reqall Gemini Plugin
 
-Persistent, artifact-driven semantic memory for Gemini agents.
-
-Unlike the CLI-focused Claude Plugin, the Gemini plugin leverages the agent's ambient IDE environment, rich markdown artifacts, and slash commands.
+Persistent, artifact-driven semantic memory for Gemini agents. This Gemini CLI extension provides MCP configuration and model instructions for memory workflows.
 
 ## Installation
 
-1. Create a `reqall` directory inside your Gemini plugins folder:
+1. Install using the official Gemini CLI extension manager (replace the example path with your checkout or extracted npm package):
    ```bash
-   mkdir -p ~/.gemini/plugins/reqall
+   gemini extensions install /absolute/path/to/gemini-plugin
+   gemini extensions list
    ```
-2. Copy the contents of this `gemini-plugin` directory into the new `~/.gemini/plugins/reqall` folder.
-3. Set your Reqall API key as an environment variable in your terminal before launching your IDE/Gemini agent:
+2. Enter your Reqall API key when the installer prompts for the extension settings (`REQALL_API_KEY`, stored as sensitive; `REQALL_URL` is optional). Gemini CLI does not pass your shell environment to extensions, so an `export` is not enough. To change the values later:
    ```bash
-   export REQALL_API_KEY="your-api-key"
-   # Optional: export REQALL_URL="https://reqall.net"
+   gemini extensions config reqall
    ```
+3. Restart Gemini CLI. In the interactive session, run `/memory show` and check for `Reqall — AI Agent Memory`, `Project naming policy`, and the imported workflow/hook instructions. An MCP server listing alone does not verify instruction activation.
+
+`gemini-extension.json` registers `GEMINI.md` via the supported `contextFileName` field. That packaged entry point imports all seven `_agents` Markdown files with relative `@./path.md` imports, loading the naming policy and workflow guidance as model context. Installation copies the extension; editing the source checkout does not update an installed copy. For development, use the official `gemini extensions link /absolute/path/to/gemini-plugin` command instead and restart the session after changes.
+
+Official references: [extension installation, contextFileName, custom commands and hooks](https://geminicli.com/docs/extensions/reference/) and [GEMINI.md imports and /memory show](https://geminicli.com/docs/cli/gemini-md/). Context loading is separate from MCP authentication; these instructions do not verify API connectivity.
 
 ## How it Works
 
-The Gemini plugin relies on Gemini's continuous generation of artifacts (`task.md`, `implementation_plan.md`) and workflows to synchronize knowledge as you work.
+The loaded instructions guide the model to synchronize artifacts such as `task.md` and `implementation_plan.md` when those artifacts are used. Gemini CLI does not automatically generate them on this extension's behalf.
 
-### Core Workflows (Slash Commands)
+### Workflow templates
 
-- `/reqall-context` - Run before starting a complex task. Hydrates the agent's context window with relevant architecture, issues, and specifications from Reqall.
-- `/reqall-sync` - Explicitly pushes your current local `task.md` and `implementation_plan.md` outputs up to Reqall as linked semantic records.
+These are loaded Markdown templates, not registered slash commands. Ask Gemini in ordinary language to follow the relevant workflow:
+
+- `_agents/workflows/reqall-context.md` — Recall relevant architecture, issues, and specifications before a complex task.
+- `_agents/workflows/reqall-sync.md` — Persist current task/plan artifacts as linked Reqall records.
+
+No `commands/*.toml` registrations are shipped, so `/reqall-context` and `/reqall-sync` are not available commands from this extension.
 
 ### Hooks
- 
-The plugin utilizes native `gemini-cli` agent hooks via the `_agents/hooks/` directory to act proactively:
-1. **`before_request` (Context)**: BEFORE starting any work on a new prompt, Gemini will automatically query Reqall to load relevant past context, specs, and open issues.
-2. **`before_tool_use` (Guardrails)**: Before executing file modifications, Gemini refers to project constraints and architectural specifications.
-3. **`after_plan` (Specification)**: Upon user approval of an `implementation_plan.md`, Gemini will explicitly push it to Reqall as a `spec` or `arch` record.
-4. **`after_task` (Persistence)**: As Gemini works through items in `task.md` or finishes a coding session, it will automatically persist them as `todo` or `issue` records under the project, saving the user from having to manually request syncing.
+
+The `_agents/hooks/` Markdown files are instruction templates, not registered executable Gemini CLI hooks. They are imported into model context through `GEMINI.md`, not wired to host events. No `hooks/hooks.json` is shipped: model adherence is not guaranteed lifecycle execution. The templates guide these steps:
+
+1. **`before_request` (Context)**: Recall relevant context, specs, and open issues before new work.
+2. **`before_tool_use` (Guardrails)**: Consult constraints and architectural specifications before modifications.
+3. **`after_plan` (Specification)**: Persist an approved plan as a `spec` or `arch` record.
+4. **`after_task` (Persistence)**: Persist task outcomes as linked records.
 
 ## Future Roadmap / Planned Capabilities
 
@@ -43,3 +50,10 @@ The plugin utilizes native `gemini-cli` agent hooks via the `_agents/hooks/` dir
 ## License
 
 MIT
+## Project naming
+
+Reuse a host-bound project throughout recall and persistence; explicit operation arguments (including SLEEP) remain authoritative. Otherwise use `REQALL_PROJECT_NAME` / existing host setting → network Git origin → explicitly labelled `project_name` or `project` → nearest `.reqall.yml` / `.reqall.yaml` → nearest `package.json` / `go.mod` / `Cargo.toml` → exact path relative to a known workspace → `.machine/<short-lower-hostname>/<os-user>`. Preserve explicit identifiers; never guess from a basename or an unlabelled slash token. Route account-wide preferences deliberately to `.user`.
+
+The installed instruction assets embed the full offline policy, including metadata limits and Git compatibility. Canonical reference: https://github.com/ReqallSystem/plugins/blob/main/doc/PROJECT_NAMING.md
+
+Every `_agents` system, hook, and workflow file embeds the policy and reuses the current binding. These assets and `gemini-extension.json` are included in the npm package. Run `npm test` for naming and package coverage.
