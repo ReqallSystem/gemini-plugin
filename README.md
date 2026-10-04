@@ -9,10 +9,9 @@ Persistent, artifact-driven semantic memory for Gemini agents. This Gemini CLI e
    gemini extensions install /absolute/path/to/gemini-plugin
    gemini extensions list
    ```
-2. Set your Reqall API key before launching Gemini CLI:
+2. Enter your Reqall API key when the installer prompts for the extension settings (`REQALL_API_KEY`, stored as sensitive; `REQALL_URL` is optional). Gemini CLI does not pass your shell environment to extensions, so an `export` is not enough. To change the values later:
    ```bash
-   export REQALL_API_KEY="your-api-key"
-   # Optional: export REQALL_URL="https://reqall.net"
+   gemini extensions config reqall
    ```
 3. Restart Gemini CLI. In the interactive session, run `/memory show` and check for `Reqall — AI Agent Memory`, `Project naming policy`, and the imported workflow/hook instructions. An MCP server listing alone does not verify instruction activation.
 

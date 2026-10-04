@@ -3,6 +3,19 @@
   "version": "2026.3.20",
   "description": "Persistent semantic knowledgebase for AI agents",
   "contextFileName": "GEMINI.md",
+  "settings": [
+    {
+      "name": "Reqall API key",
+      "description": "API key for the Reqall MCP server, sent as the bearer token.",
+      "envVar": "REQALL_API_KEY",
+      "sensitive": true
+    },
+    {
+      "name": "Reqall URL",
+      "description": "Optional Reqall server base URL; leave empty for https://reqall.net.",
+      "envVar": "REQALL_URL"
+    }
+  ],
   "mcpServers": {
     "reqall": {
       "url": "${REQALL_URL:-https://reqall.net}/mcp",

@@ -31,6 +31,20 @@ test('extension loads all packaged instruction templates through documented cont
   }
 });
 
+test('every variable the MCP server reads is a declared extension setting', () => {
+  // Gemini CLI passes extensions only safe variables plus manifest settings[].envVar.
+  const manifest = JSON.parse(readFileSync(root + 'gemini-extension.json', 'utf8'));
+  const declared = new Set((manifest.settings ?? []).map(setting => setting.envVar));
+  const used = [...JSON.stringify(manifest.mcpServers).matchAll(/\$\{([A-Z_][A-Z0-9_]*)/g)].map(match => match[1]);
+  assert.ok(used.length > 0);
+  for (const name of used) assert.ok(declared.has(name), `undeclared extension setting ${name}`);
+  assert.equal(manifest.settings.find(setting => setting.envVar === 'REQALL_API_KEY').sensitive, true);
+});
+
+test('context maps reqall:<tool> names to Gemini MCP tool names', () => {
+  assert.match(readFileSync(root + 'GEMINI.md', 'utf8'), /mcp_reqall_search/);
+});
+
 test('README documents official installation and verification without phantom commands or hooks', () => {
   const readme = readFileSync(root + 'README.md', 'utf8');
   assert.match(readme, /gemini extensions install \/absolute\/path\/to\/gemini-plugin/);
