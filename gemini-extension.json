@@ -2,6 +2,7 @@
   "name": "reqall",
   "version": "2026.3.20",
   "description": "Persistent semantic knowledgebase for AI agents",
+  "contextFileName": "GEMINI.md",
   "mcpServers": {
     "reqall": {
       "url": "${REQALL_URL:-https://reqall.net}/mcp",

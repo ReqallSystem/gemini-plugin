@@ -4,8 +4,12 @@
   "description": "Reqall plugin for Google Gemini — persistent semantic memory for AI agents",
   "type": "module",
   "files": [
+    "GEMINI.md",
     "_agents",
     "gemini-extension.json"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
 }
