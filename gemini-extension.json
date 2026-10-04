@@ -1,6 +1,6 @@
 {
   "name": "reqall",
-  "version": "2026.3.20",
+  "version": "2026.10.4",
   "description": "Persistent semantic knowledgebase for AI agents",
   "contextFileName": "GEMINI.md",
   "settings": [
